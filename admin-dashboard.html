@@ -197,6 +197,301 @@
         <button type="submit">Book Seat</button>
       </form>
     </section>
+    <style>
+    body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: #f5f7fa;
+    color: #333;
+  }
+  h1, h2 {
+    text-align: center;
+  }
+  .container {
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    gap: 30px;
+  }
+  .form-section, .seating-section {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    flex: 1;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+  }
+  input[type=text], input[type=email], input[type=tel], select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #0078d7;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  button:hover {
+    background: #005ea2;
+  }
+  .seating-map {
+    display: grid;
+    grid-template-columns: repeat(30, 25px);
+    gap: 4px;
+    justify-content: center;
+  }
+  .seat {
+    width: 25px;
+    height: 25px;
+    background: #9e9e9e;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 10px;
+    line-height: 25px;
+    text-align: center;
+    color: white;
+    user-select: none;
+  }
+  .seat.front { background: #d9534f; } /* Red - Front Section */
+  .seat.middle { background: #5bc0de; } /* Blue - Middle Section */
+  .seat.balcony { background: #5cb85c; } /* Green - Balcony Section */
+  .seat.vip { background: #f0ad4e; } /* Orange - VIP */
+  .seat.selected { outline: 3px solid #333; }
+  .seat.taken { background: #555; cursor: not-allowed; }
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+
+
+<div class="container">
+  <!-- Guest Info & Reservation Form -->
+  <div class="form-section">
+    <h2>Guest Information</h2>
+    <form id="reservationForm">
+      <label for="guestName">Full Name:</label>
+      <input type="text" id="guestName" required />
+
+      <label for="affiliation">Affiliation (organization/institution):</label>
+      <input type="text" id="affiliation" />
+
+      <label for="email">Email Address:</label>
+      <input type="email" id="email" required />
+
+      <label for="phone">Phone Number:</label>
+      <input type="tel" id="phone" />
+
+      <label for="title">Title:</label>
+      <input type="text" id="title" />
+
+      <label for="eventSelect">Select Event & Session:</label>
+      <select id="eventSelect" required>
+        <option value="" disabled selected>-- Choose an event/session --</option>
+      </select>
+
+      <label>Selected Seat:</label>
+      <div id="selectedSeatDisplay">None</div>
+
+      <button type="submit" disabled id="bookButton">Book Seat</button>
+    </form>
+  </div>
+
+  <!-- Seating Map -->
+  <div class="seating-section">
+    <h2>Seating Arrangement</h2>
+    <div class="seating-map" id="seatingMap"></div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color" style="background:#d9534f"></div> Front Section (150,000 UGX)</div>
+      <div class="legend-item"><div class="legend-color" style="background:#5bc0de"></div> Middle Section (75,000 UGX)</div>
+      <div class="legend-item"><div class="legend-color" style="background:#5cb85c"></div> Balcony Section (35,000 UGX)</div>
+      <div class="legend-item"><div class="legend-color" style="background:#f0ad4e"></div> VIP Box (350,000 UGX)</div>
+      <div class="legend-item"><div class="legend-color" style="background:#555"></div> Taken</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Data setup
+
+// Sample Events with sessions
+const events = [
+  {
+    id: 'evt1',
+    title: 'Project Showcase',
+    type: 'Showcase',
+    sessions: [
+      { id: 'sess1', type: 'Workshop', time: 'Morning', date: '2025-06-01' },
+      { id: 'sess2', type: 'Presentation', time: 'Afternoon', date: '2025-06-01' },
+    ]
+  },
+  {
+    id: 'evt2',
+    title: 'Keynote Speeches',
+    type: 'Keynote',
+    sessions: [
+      { id: 'sess3', type: 'Keynote', time: 'Morning', date: '2025-06-02' }
+    ]
+  }
+];
+
+// Seat configuration
+const seatsConfig = [
+  { section: 'front', rows: ['A','B','C','D','E','F'], seatCount: 30, price: 150000 },
+  { section: 'middle', rows: ['G','H','I','J','K','L'], seatCount: 30, price: 75000 },
+  { section: 'balcony', rows: ['AA','BB','CC','DD','EE','FF'], seatCount: [30,30,30,28,24,24], price: 35000 },
+  { section: 'vip', rows: ['X'], seatCount: 16, price: 350000 }
+];
+
+// Tracking reservations (in-memory, for demo)
+let reservations = {}; // { sessionId: { seatId: guestName } }
+
+// Variables for current selection
+let selectedSession = null;
+let selectedSeatId = null;
+
+// Populate event/session dropdown
+const eventSelect = document.getElementById('eventSelect');
+
+function populateEventSessions() {
+  events.forEach(event => {
+    event.sessions.forEach(session => {
+      const option = document.createElement('option');
+      option.value = session.id;
+      option.textContent = `${event.title} - ${session.type} (${session.time}, ${session.date})`;
+      eventSelect.appendChild(option);
+    });
+  });
+}
+
+// Create seating map grid
+const seatingMap = document.getElementById('seatingMap');
+
+function createSeats(sessionId) {
+  seatingMap.innerHTML = '';
+  selectedSeatId = null;
+  document.getElementById('selectedSeatDisplay').textContent = 'None';
+  document.getElementById('bookButton').disabled = true;
+
+  // Create seats by section
+  seatsConfig.forEach(section => {
+    if(section.section === 'balcony'){
+      // balcony has variable seat counts
+      section.rows.forEach((row, idx) => {
+        let count = section.seatCount[idx];
+        for(let i=1; i <= count; i++){
+          addSeat(sessionId, section.section, row + i);
+        }
+      });
+    } else {
+      section.rows.forEach(row => {
+        for(let i=1; i <= section.seatCount; i++){
+          addSeat(sessionId, section.section, row + i);
+        }
+      });
+    }
+  });
+}
+
+function addSeat(sessionId, section, seatLabel){
+  const seat = document.createElement('div');
+  seat.classList.add('seat', section);
+  seat.textContent = seatLabel;
+
+  // Check if seat is taken for this session
+  if(reservations[sessionId] && reservations[sessionId][seatLabel]){
+    seat.classList.add('taken');
+  }
+
+  seat.addEventListener('click', () => {
+    if(seat.classList.contains('taken')) return;
+
+    // Remove previously selected
+    const prevSelected = seatingMap.querySelector('.seat.selected');
+    if(prevSelected) prevSelected.classList.remove('selected');
+
+    seat.classList.add('selected');
+    selectedSeatId = seatLabel;
+    document.getElementById('selectedSeatDisplay').textContent = seatLabel;
+    document.getElementById('bookButton').disabled = false;
+  });
+
+  seatingMap.appendChild(seat);
+}
+
+// Handle session change
+eventSelect.addEventListener('change', (e) => {
+  selectedSession = e.target.value;
+  createSeats(selectedSession);
+});
+
+// Handle form submission (booking)
+const form = document.getElementById('reservationForm');
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  if(!selectedSession || !selectedSeatId) {
+    alert('Please select a session and seat.');
+    return;
+  }
+
+  const guestName = document.getElementById('guestName').value.trim();
+  if(guestName === '') {
+    alert('Guest name is required.');
+    return;
+  }
+
+  // Store reservation in memory (simulate DB)
+  if(!reservations[selectedSession]) reservations[selectedSession] = {};
+  if(reservations[selectedSession][selectedSeatId]){
+    alert('Seat already taken, please select another.');
+    createSeats(selectedSession); // refresh
+    return;
+  }
+  reservations[selectedSession][selectedSeatId] = guestName;
+
+  alert(`Seat ${selectedSeatId} booked successfully for ${guestName}!`);
+
+  // Reset form
+  form.reset();
+  selectedSeatId = null;
+  document.getElementById('selectedSeatDisplay').textContent = 'None';
+  document.getElementById('bookButton').disabled = true;
+
+  // Refresh seating map to mark seat taken
+  createSeats(selectedSession);
+});
+
+// Initialize UI
+populateEventSessions();
+
+</script>
 
     <!-- 4. Ticket Generation -->
     <section class="dashboard-section" id="ticket-generation">
@@ -213,6 +508,204 @@
       <input type="text" placeholder="Manual Booking ID Entry" id="manual-checkin">
       <button onclick="manualCheckIn()">Check In</button>
     </section>
+
+  <title>Theatre Seating</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 20px;
+      position: relative;
+    }
+
+    .stage {
+      text-align: center;
+      padding: 10px;
+      margin: auto;
+      width: 60%;
+      background-color: #e1f4dc;
+      border: 2px solid #4cae4c;
+      font-weight: bold;
+      font-size: 1.5em;
+      margin-bottom: 30px;
+    }
+
+    .theater {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      position: relative;
+    }
+
+    .box-seats {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-right: 10px;
+    }
+
+    .box-label {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      margin-bottom: 10px;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    .box-seat {
+      width: 25px;
+      height: 25px;
+      background-color: #f0e68c;
+      margin: 3px auto;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 0.8em;
+      line-height: 25px;
+    }
+
+    .section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-weight: bold;
+      padding: 8px 12px;
+      margin-bottom: 10px;
+      display: inline-block;
+      background-color: #ddd;
+      border: 1px solid #aaa;
+    }
+
+    .seating-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 3px 0;
+    }
+
+    .row-label {
+      width: 25px;
+      text-align: right;
+      margin-right: 5px;
+      font-weight: bold;
+    }
+
+    .row-label.right {
+      margin-left: 5px;
+      margin-right: 0;
+      text-align: left;
+    }
+
+    .seat {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      margin: 2px;
+      border: 1px solid #999;
+      cursor: pointer;
+    }
+
+    .first .seat {
+      background-color: #cce5ff;
+    }
+
+    .middle .seat {
+      background-color: #f8d7da;
+    }
+
+    .balcony .seat {
+      background-color: #d4edda;
+    }
+
+    .selected {
+      outline: 2px solid #000;
+      background-color: #ffc107 !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stage">STAGE</div>
+
+  <div class="theater">
+    <!-- Box Seats Left -->
+    <div class="box-seats">
+      <div class="box-label">BOX 1–8</div>
+      <div class="box-seat">1</div>
+      <div class="box-seat">2</div>
+      <div class="box-seat">3</div>
+      <div class="box-seat">4</div>
+      <div class="box-seat">5</div>
+      <div class="box-seat">6</div>
+      <div class="box-seat">7</div>
+      <div class="box-seat">8</div>
+    </div>
+
+    <div>
+      <!-- First Section -->
+      <div class="section first">
+        <div class="section-title">FIRST SECTION</div>
+        <div id="first-section"></div>
+      </div>
+
+      <!-- Middle Section -->
+      <div class="section middle">
+        <div class="section-title">MIDDLE SECTION</div>
+        <div id="middle-section"></div>
+      </div>
+
+      <!-- Balcony Section -->
+      <div class="section balcony">
+        <div class="section-title">BALCONY SECTION</div>
+        <div id="balcony-section"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function createSection(sectionId, rowLabels, cols) {
+      const section = document.getElementById(sectionId);
+      rowLabels.forEach(label => {
+        const row = document.createElement('div');
+        row.className = 'seating-row';
+
+        // Left Label
+        const leftLabel = document.createElement('div');
+        leftLabel.className = 'row-label';
+        leftLabel.textContent = label;
+        row.appendChild(leftLabel);
+
+        // Seats
+        for (let i = 0; i < cols; i++) {
+          const seat = document.createElement('div');
+          seat.className = 'seat';
+          seat.addEventListener('click', () => {
+            seat.classList.toggle('selected');
+          });
+          row.appendChild(seat);
+        }
+
+        // Right Label
+        const rightLabel = document.createElement('div');
+        rightLabel.className = 'row-label right';
+        rightLabel.textContent = label;
+        row.appendChild(rightLabel);
+
+        section.appendChild(row);
+      });
+    }
+
+    // Setup sections
+    createSection("first-section", ["A", "B", "C", "D", "E", "F"], 14);
+    createSection("middle-section", ["G", "H", "I", "J", "K", "L", "M", "N"], 14);
+    createSection("balcony-section", ["AA", "BB", "CC", "DD", "EE", "FF"], 14);
+  </script>
+
+</body>
+
+
 
     <!-- 6. Attendance Tracking -->
     <section class="dashboard-section" id="attendance-tracking">
