@@ -1,4 +1,4 @@
-// =============== LOGIN SESSION CHECK ===============
+// =============== LOGIN SESSION CHECK ==============
 document.addEventListener('DOMContentLoaded', () => {
   const currentPage = window.location.pathname.split("/").pop();
 
