@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VU Event Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+  <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+    
+    <button id="logout-btn" style="margin-right: 15px;">Logout</button>
+  </header>
+<body>
+
+  <header>Victoria University Event Admin Dashboard</header>
+
+  <nav>
+    <a href="#guest-registration">Guest Registration</a>
+    <a href="#session-management">Session Management</a>
+    <a href="#seat-booking">Seat Booking</a>
+    <a href="#ticket-generation">Ticket Generation</a>
+    <a href="#check-in">Check-In</a>
+    <a href="#attendance-tracking">Attendance Tracking</a>
+    <a href="#reporting">Reporting</a>
+  </nav>
+
+  <main>
+
+    <!-- 1. Guest Registration -->
+    <section class="dashboard-section" id="guest-registration">
+      <h2>Guest Registration</h2>
+      <form id="guest-form">
+        <input type="text" placeholder="Full Name" required><br>
+        <input type="text" placeholder="Affiliation/Organization"><br>
+        <input type="text" placeholder="Email" required><br>
+        <input type="text" placeholder="Phone Number"><br>
+        <input type="text" placeholder="Title (e.g. Student, Lecturer)"><br>
+        <button type="submit">Register Guest</button>
+      </form>
+    </section>
+
+    <!-- 2. Session Management -->
+    <section class="dashboard-section" id="session-management">
+      <h2>Session Management</h2>
+      <form id="session-form">
+        <input type="text" placeholder="Session Title" required><br>
+        <input type="text" placeholder="Session Type (e.g. Workshop, Talk)" required><br>
+        <input type="text" placeholder="Date and Time" required><br>
+        <input type="text" placeholder="Capacity (Number of Seats)" required><br>
+        <button type="submit">Add Session</button>
+      </form>
+    </section>
+
+    <!-- 3. Seat Booking -->
+    <section class="dashboard-section" id="seat-booking">
+      <h2>Seat Booking</h2>
+      <form id="booking-form">
+        <input type="text" placeholder="Guest Email" required><br>
+        <input type="text" placeholder="Select Session ID" required><br>
+        <input type="text" placeholder="Preferred Seat (e.g. A3)" required><br>
+        <button type="submit">Book Seat</button>
+      </form>
+    </section>
+
+    <!-- 4. Ticket Generation -->
+    <section class="dashboard-section" id="ticket-generation">
+      <h2>Ticket Generation (QR Code)</h2>
+      <input type="text" id="qr-data" placeholder="Enter Booking ID or Guest Email">
+      <button onclick="generateQR()">Generate QR</button>
+      <div id="ticket-qr"></div>
+    </section>
+
+    <!-- 5. Check-In System -->
+    <section class="dashboard-section" id="check-in">
+      <h2>Check-In System</h2>
+      <video id="qr-video"></video>
+      <input type="text" placeholder="Manual Booking ID Entry" id="manual-checkin">
+      <button onclick="manualCheckIn()">Check In</button>
+    </section>
+
+    <!-- 6. Attendance Tracking -->
+    <section class="dashboard-section" id="attendance-tracking">
+      <h2>Attendance Tracking</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Guest Name</th>
+            <th>Session</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="attendance-log">
+          <tr><td>Ayikobua Gilbert</td><td>Auditorium</td><td>Present</td></tr>
+          <tr><td>Maliamungu Ronald</td><td>Talk B</td><td>Absent</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7. Reporting -->
+    <section class="dashboard-section" id="reporting">
+      <h2>Reporting</h2>
+      <button onclick="exportExcel()">Export to Excel</button>
+      <button onclick="exportPDF()">Export to PDF</button>
+    </section>
+
+  </main>
+
+  <!-- Optional Script for QR -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script>
+    function generateQR() {
+      const qrData = document.getElementById("qr-data").value;
+      const qrContainer = document.getElementById("ticket-qr");
+      qrContainer.innerHTML = ""; // Clear previous
+      if (qrData) {
+        QRCode.toCanvas(document.createElement("canvas"), qrData, function (error, canvas) {
+          if (error) console.error(error);
+          else qrContainer.appendChild(canvas);
+        });
+      }
+    }
+
+    function manualCheckIn() {
+      const id = document.getElementById("manual-checkin").value;
+      if (id) alert("Manual Check-In Successful for: " + id);
+    }
+
+    function exportExcel() {
+      alert("Excel export simulated.");
+    }
+
+    function exportPDF() {
+      alert("PDF export simulated.");
+    }
+  </script>
+  <script src="main.js"></script>
+
+</body>
+</html>

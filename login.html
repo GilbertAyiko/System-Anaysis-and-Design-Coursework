@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Victoria University Ticketing System</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #3d3375;
+    }
+
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 20px;
+    }
+
+    .login-box {
+      display: flex;
+      background: #ffffff;
+      border-radius: 10px;
+      max-width: 900px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .login-left, .login-right {
+      flex: 1;
+      padding: 40px;
+    }
+
+    .login-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .login-left h2 {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .login-left p {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 30px;
+    }
+
+    label {
+      font-size: 14px;
+      margin-top: 15px;
+      display: block;
+    }
+
+    label span {
+      color: red;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background: #f7f7f7;
+      font-size: 14px;
+    }
+
+    .login-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    .login-options a {
+      text-decoration: none;
+      color: #e74c3c;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background-color: #3d3375;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .submit-btn:hover {
+      background-color: #2e285c;
+    }
+
+    .signup-text {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .signup-text a {
+      color: #e74c3c;
+      text-decoration: none;
+    }
+
+    .login-right {
+      background-color: #f5f5ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-right img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    @media (max-width: 768px) {
+      .login-box {
+        flex-direction: column;
+      }
+
+      .login-right {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-box">
+      <div class="login-left">
+        <h2>WELCOME BACK</h2>
+        <p>Login With VU Mail</p>
+        <form onsubmit="return loginUser();">
+          <label for="email">Email<span>*</span></label>
+          <input type="email" id="email" placeholder="example@student.vu.ac.ug" required />
+
+          <label for="password">Password<span>*</span></label>
+          <input type="password" id="password" placeholder="@B123" required />
+
+          <div class="login-options">
+            <label><input type="checkbox" /> Keep Me Logged in</label>
+            <a href="events.html">Forgot Your Password?</a>
+          </div>
+
+          <button type="submit" class="submit-btn">Submit</button>
+          <p class="signup-text">Don't Have an Account? <a href="#">Sign Up</a></p>
+        </form>
+      </div>
+      <div class="login-right">
+        <img src="Victoria.jfif" alt="Ticketing System Graphic">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function loginUser() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      const users = [
+        { email: 'student@vu.ac.ug', password: 'pass123', redirect: 'events.html' },
+        { email: 'admin@vu.ac.ug', password: 'admin123', redirect: 'admin-dashboard.html' },
+        { email: 'checkin@vu.ac.ug', password: 'check123', redirect: 'check-in.html' }
+      ];
+
+      const user = users.find(u => u.email === email && u.password === password);
+
+      let messageElem = document.getElementById('login-status');
+      if (!messageElem) {
+        messageElem = document.createElement('p');
+        messageElem.id = 'login-status';
+        messageElem.style.marginTop = '10px';
+        document.querySelector('form').appendChild(messageElem);
+      }
+
+      if (user) {
+        messageElem.textContent = 'Login successful! Redirecting...';
+        messageElem.style.color = 'green';
+        localStorage.setItem('user', email);
+        setTimeout(() => {
+          window.location.href = user.redirect;
+        }, 1000);
+      } else {
+        messageElem.textContent = 'Invalid email or password.';
+        messageElem.style.color = 'red';
+      }
+
+      return false;
+    }
+  </script>
+</body>
+</html>

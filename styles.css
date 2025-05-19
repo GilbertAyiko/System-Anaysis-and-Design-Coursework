@@ -1,0 +1,199 @@
+/* Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  background-color: #f5f7fa;
+  color: #333;
+  padding-bottom: 50px;
+}
+
+header {
+  background-color: #2a4365;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  font-size: 1.5em;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Navigation */
+nav {
+  display: flex;
+  justify-content: center;
+  background-color: #4a5568;
+  padding: 10px 0;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+
+nav a:hover {
+  background-color: #2d3748;
+}
+
+/* Main Content Sections */
+main {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.dashboard-section {
+  background: #fff;
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* Events */
+#event-list {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  margin-top: 15px;
+}
+
+.event-card {
+  background: #edf2f7;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.event-card:hover {
+  transform: scale(1.01);
+}
+
+.event-card h3 {
+  color: #2b6cb0;
+  margin-bottom: 10px;
+}
+
+.event-card button {
+  margin-top: 8px;
+  margin-right: 10px;
+  padding: 8px 12px;
+  background: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.event-card button:hover {
+  background: #2c5282;
+}
+
+/* QR Generator and Check-In */
+#ticket-qr {
+  margin: 20px auto;
+  display: block;
+}
+
+#qr-video {
+  width: 100%;
+  max-width: 500px;
+  margin-top: 10px;
+  border-radius: 10px;
+  border: 2px solid #ccc;
+}
+
+input[type="text"] {
+  padding: 10px;
+  width: 100%;
+  max-width: 400px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Dashboard Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+table th, table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+table th {
+  background-color: #2b6cb0;
+  color: white;
+}
+
+table td button {
+  background-color: #e53e3e;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+table td button:hover {
+  background-color: #c53030;
+}
+
+/* Buttons */
+button {
+  padding: 10px 16px;
+  background-color: #2b6cb0;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: #2c5282;
+}
+
+/* Textarea (Logs) */
+textarea {
+  font-family: monospace;
+  padding: 10px;
+  background: #f7fafc;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  header {
+    font-size: 1.2em;
+  }
+
+  nav {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #event-list {
+    grid-template-columns: 1fr;
+  }
+}
