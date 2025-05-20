@@ -1,0 +1,58 @@
+
+CREATE DATABASE Event;
+SHOW DATABASES;
+USE Event;
+CREATE TABLE Guest (
+    Guest_Id INT(10) PRIMARY KEY AUTO_INCREMENT,
+    Name CHAR(20),
+    Email CHAR(50),
+    Phone VARCHAR(15),
+    Afiliation CHAR(15),
+    Title CHAR(10)
+);
+DESC Guest;
+CREATE TABLE Session (
+    Session_Id INT(10) PRIMARY KEY AUTO_INCREMENT,
+    Date DATE,
+    Time TIME,
+    Type CHAR(15),
+    Exhibition_Title CHAR(50)
+);
+DESC Session;
+
+CREATE TABLE Seat (
+    Seat_Id CHAR(100) PRIMARY KEY,
+    Section CHAR(20),
+    Price INT,
+    Availability BOOLEAN
+);
+DESC Seat;
+
+
+CREATE TABLE Reservation (
+    Reservation_Id INT(10) PRIMARY KEY AUTO_INCREMENT,
+    Guest_Id INT(10),
+    Session_Id INT(10),
+    Seat_Id CHAR(100),
+    Reservation_Time DATETIME,
+    Payment_Status CHAR(10),
+    Amount_Paid INT,
+
+    FOREIGN KEY (Guest_Id) REFERENCES Guest(Guest_Id),
+    FOREIGN KEY (Session_Id) REFERENCES Session(Session_Id),
+    FOREIGN KEY (Seat_Id) REFERENCES Seat(Seat_Id)
+);
+DESC Reservation;
+
+SELECT * FROM Seat;
+
+INSERT INTO Seat VALUES 
+('A1-A30', 'Front Section', 150000, TRUE),
+('G1-G30', 'Middle Section', 75000, TRUE),
+('AA1-30', 'Balcony Section', 35000, TRUE),
+('X1-16', 'VIP BOX', 350000, TRUE);
+
+SELECT * FROM Reservation;
+SELECT * FROM Session;
+SELECT * FROM Guest;
+SELECT * FROM Seat;
